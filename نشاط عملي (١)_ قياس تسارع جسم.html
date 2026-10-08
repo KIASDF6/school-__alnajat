@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نشاط عملي (١): قياس تسارع جسم على المضمار الهوائي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f6;--card:#fff;--ink:#12303b;--mute:#52707c;--line:#cfdce2;--teal:#0f7b8a;--coral:#d9534f;--amber:#e8a317;--ok:#2f8f5b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1b21;--card:#16272f;--ink:#e6f0f3;--mute:#9db6c0;--line:#2b434d;--teal:#3fb5c6}}
+:root[data-theme="dark"]{--bg:#0e1b21;--card:#16272f;--ink:#e6f0f3;--mute:#9db6c0;--line:#2b434d;--teal:#3fb5c6}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",Tahoma,"Segoe UI",sans-serif;line-height:1.7;font-size:17px}
+.wrap{max-width:1000px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:clamp(24px,5vw,34px);font-weight:800;margin:6px 0 4px;line-height:1.3}
+.sub{color:var(--mute);margin:0 0 16px}
+.formula{display:inline-block;direction:ltr;font-weight:700;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:2px 12px;margin-inline-start:6px}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;overflow:hidden}
+svg{width:100%;height:auto;display:block}
+.steps{display:flex;gap:6px;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+.steps button{flex:1 0 auto;min-width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--card);color:var(--mute);font:700 16px inherit;font-family:inherit;cursor:default}
+.steps button.done{background:var(--teal);border-color:var(--teal);color:#fff}
+.steps button.cur{border-color:var(--teal);color:var(--teal);box-shadow:0 0 0 3px rgba(15,123,138,.2)}
+.grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{margin:0 0 6px;font-size:21px}
+.card p{margin:6px 0}
+.why{color:var(--mute);font-size:15px;border-inline-start:3px solid var(--amber);padding-inline-start:10px;margin:10px 0}
+.btn{font-family:inherit;font-size:17px;font-weight:700;background:var(--teal);color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin-top:8px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.alt{background:transparent;color:var(--teal);border:2px solid var(--teal)}
+.btn:focus-visible,input:focus-visible,.steps button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+label{display:block;margin-top:10px;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--teal)}
+.val{font-weight:800;color:var(--teal);direction:ltr;display:inline-block}
+.screen{background:#0c2a33;color:#9ff0ff;border-radius:10px;padding:12px;font-family:Consolas,monospace;direction:ltr;text-align:left;font-size:15px;min-height:96px}
+.screen b{color:#fff}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:15px}
+th,td{border:1px solid var(--line);padding:6px 4px;text-align:center}
+th{background:rgba(15,123,138,.12)}
+td.n{direction:ltr}
+.calc{direction:ltr;text-align:left;background:rgba(15,123,138,.1);border-radius:10px;padding:10px 12px;font-weight:700;margin-top:8px}
+.msg{color:var(--coral);font-weight:700;min-height:1.6em}
+.good{color:var(--ok)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>نشاط عملي (١): قياس تسارع جسم</h1>
+<p class="sub">نفّذ التجربة خطوة بخطوة على مضمار هوائي افتراضي. القانون المستخدم: <span class="formula">a = (v − v₀) / Δt</span></p>
+
+<div class="stage">
+<svg id="svg" viewBox="0 0 800 300" role="img" aria-label="رسم المضمار الهوائي والعربة والبوابتان الضوئيتان والكتلة المعلقة">
+  <rect width="800" height="300" fill="none"/>
+  <g id="rig">
+    <rect x="50" y="157" width="650" height="16" rx="3" fill="#8aa1ad"/>
+    <g id="ticks" stroke="#12303b" stroke-width="1"></g>
+    <g id="air" opacity="0" stroke="#7fd3e0" stroke-width="2" stroke-linecap="round"></g>
+    <g id="gate1"></g><g id="gate2"></g>
+    <g id="glider" opacity="0">
+      <rect x="-30" y="128" width="60" height="26" rx="4" fill="#0f7b8a"/>
+      <rect x="-3" y="110" width="6" height="20" fill="#12303b"/>
+      <text x="0" y="146" text-anchor="middle" font-size="13" fill="#fff" font-family="Tajawal,Tahoma">عربة</text>
+    </g>
+    <circle cx="702" cy="140" r="14" fill="#fff" stroke="#12303b" stroke-width="3"/>
+    <rect x="696" y="150" width="12" height="28" fill="#8aa1ad"/>
+    <line id="s1" x1="0" y1="140" x2="702" y2="126" stroke="#12303b" stroke-width="1.5" opacity="0"/>
+    <line id="s2" x1="716" y1="140" x2="716" y2="200" stroke="#12303b" stroke-width="1.5" opacity="0"/>
+    <g id="mass" opacity="0"><rect id="massr" x="704" y="200" width="24" height="26" rx="3" fill="#d9534f"/><text id="masst" x="716" y="218" text-anchor="middle" font-size="12" fill="#fff" font-family="Tajawal,Tahoma"></text></g>
+  </g>
+  <text x="50" y="196" font-size="13" fill="#52707c" font-family="Tajawal,Tahoma">المسافة على المضمار (سم)</text>
+  <text id="stateTxt" x="50" y="26" font-size="16" fill="#12303b" font-weight="700" font-family="Tajawal,Tahoma"></text>
+</svg>
+</div>
+
+<div class="steps" id="steps" aria-label="خطوات النشاط"></div>
+
+<div class="grid">
+  <section class="card" id="panel" aria-live="polite"></section>
+  <section class="card">
+    <h2>شاشة الحاسوب</h2>
+    <div class="screen" id="screen">في انتظار التجربة...</div>
+    <h2 style="margin-top:14px">جدول النتائج</h2>
+    <table><thead><tr><th>المحاولة</th><th>v₀ (م/ث)</th><th>v (م/ث)</th><th>Δt (ث)</th><th>a (م/ث²)</th></tr></thead><tbody id="rows"></tbody></table>
+    <p id="mean" style="font-weight:700;margin-top:10px"></p>
+  </section>
+</div>
+</div>
+
+<script>
+var G=9.8, M=200; // كتلة العربة بالجرام
+var S={step:1,pump:false,tilt:1.4,tilt0:1.4,d:50,gates:false,tied:false,m:20,hung:false,running:false,trials:[]};
+var g1=20; // موضع البوابة الأولى (سم)
+var X=function(c){return 70+c*6};
+var $=function(i){return document.getElementById(i)};
+var NS="http://www.w3.org/2000/svg";
+
+// تدريج المضمار
+(function(){var t=$("ticks"),h="";for(var c=0;c<=100;c+=10){h+='<line x1="'+X(c)+'" y1="173" x2="'+X(c)+'" y2="181"/><text x="'+X(c)+'" y="193" font-size="11" text-anchor="middle" fill="#12303b" stroke="none">'+c+'</text>'}t.innerHTML=h})();
+
+function drawGate(id,pos,on,label){
+  var x=X(pos);
+  $(id).innerHTML='<rect x="'+(x-3)+'" y="96" width="6" height="61" fill="#12303b"/><circle cx="'+x+'" cy="104" r="7" fill="'+(on?"#e8a317":"#52707c")+'"/><text x="'+x+'" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#12303b" font-family="Tajawal,Tahoma">'+label+'</text>';
+}
+function setGlider(cm,drop){
+  var x=X(cm);
+  $("glider").setAttribute("transform","translate("+x+",0)");
+  var s1=$("s1");s1.setAttribute("x1",x+30);
+  var dy=Math.min(drop*0.9,60);
+  $("s2").setAttribute("y2",200+dy);
+  $("mass").setAttribute("transform","translate(0,"+dy+")");
+}
+function render(){
+  $("rig").setAttribute("transform","rotate("+(S.tilt*1.5)+" 375 165)");
+  $("air").setAttribute("opacity",S.pump?1:0);
+  if(S.pump){var h="";for(var c=0;c<=100;c+=5){h+='<line x1="'+X(c)+'" y1="152" x2="'+X(c)+'" y2="147" stroke-dasharray="1 4"/>'}$("air").innerHTML=h}
+  $("gate1").innerHTML=$("gate2").innerHTML="";
+  if(S.gates){drawGate("gate1",g1,false,"بوابة ١");drawGate("gate2",g1+S.d,false,"بوابة ٢")}
+  $("glider").setAttribute("opacity",S.tied?1:0);
+  $("s1").setAttribute("opacity",S.tied?1:0);
+  $("s2").setAttribute("opacity",S.tied?1:0);
+  $("mass").setAttribute("opacity",S.hung?1:0);
+  $("masst").textContent=S.m+" جم";
+  setGlider(0,0);
+  $("stateTxt").textContent=S.pump?(S.tilt===0?"المضمار أفقي والمضخة تعمل":"المضمار مائل قليلًا"):"المضخة متوقفة";
+  steps();panel();table();
+}
+function steps(){
+  var h="";for(var i=1;i<=7;i++){h+='<button class="'+(i<S.step?"done":i===S.step?"cur":"")+'" aria-label="الخطوة '+i+'" tabindex="-1">'+i+'</button>'}
+  $("steps").innerHTML=h;
+}
+function table(){
+  var h="";for(var i=0;i<3;i++){var t=S.trials[i];h+='<tr><td>'+(i+1)+'</td>'+(t?'<td class="n">'+t.v0.toFixed(3)+'</td><td class="n">'+t.v.toFixed(3)+'</td><td class="n">'+t.dt.toFixed(3)+'</td><td class="n"><b>'+t.a.toFixed(2)+'</b></td>':'<td>—</td><td>—</td><td>—</td><td>—</td>')+'</tr>'}
+  $("rows").innerHTML=h;
+  if(S.trials.length){var s=0;S.trials.forEach(function(t){s+=t.a});$("mean").textContent="متوسط التسارع حتى الآن: "+(s/S.trials.length).toFixed(2)+" م/ث²"}else $("mean").textContent="";
+}
+function panel(){
+  var p=$("panel"),h="";
+  if(S.step===1){
+    h='<h2>الخطوة ١: ثبّت المضمار أفقيًا وشغّل مضخة الهواء</h2><p>شغّل المضخة، ثم حرّك المنزلق حتى يصبح ميل المضمار صفرًا.</p><div class="why">لماذا؟ لو كان المضمار مائلًا فسيتحرك الجسم بتأثير وزنه أيضًا، وتصبح القوة المسببة للتسارع غير معروفة.</div>'
+     +'<button class="btn '+(S.pump?'alt':'')+'" id="b1">'+(S.pump?'المضخة تعمل ✓':'شغّل مضخة الهواء')+'</button>'
+     +'<label>ميل المضمار: <span class="val">'+S.tilt.toFixed(1)+'°</span><input type="range" id="tilt" min="-2" max="2" step="0.1" value="'+S.tilt+'" '+(S.pump?'':'disabled')+'></label>'
+     +'<div class="msg">'+(S.pump&&S.tilt!==0?'اضبط الميل على 0.0°':'')+'</div><button class="btn" id="n1" '+(S.pump&&S.tilt===0?'':'disabled')+'>التالي</button>';
+  }else if(S.step===2){
+    h='<h2>الخطوة ٢: ضع البوابتين الضوئيتين</h2><p>البوابة الأولى عند 20 سم. اختر المسافة المناسبة بينهما.</p><div class="why">كل بوابة تقيس سرعة العربة لحظة مرورها. كلما زادت المسافة زاد الفرق بين السرعتين فتقل نسبة الخطأ في القياس.</div>'
+     +'<label>المسافة بين البوابتين: <span class="val">'+S.d+' سم</span><input type="range" id="dist" min="30" max="60" step="5" value="'+S.d+'"></label><button class="btn" id="n2">ثبّت البوابتين</button>';
+  }else if(S.step===3){
+    h='<h2>الخطوة ٣: ضع العربة واربطها بالخيط</h2><p>ضع العربة عند بداية المضمار، واربطها بخيط يمر فوق البكرة.</p><div class="why">البكرة تغيّر اتجاه القوة: تسحب الكتلة المعلقة الخيط لأسفل فتجذب العربة أفقيًا على المضمار.</div><button class="btn" id="n3">ضع العربة واربط الخيط</button>';
+  }else if(S.step===4){
+    var F=(S.m/1000*G);
+    h='<h2>الخطوة ٤: علّق كتلة صغيرة وزنها</h2><p>الكتلة المعلقة تمثل القوة المسببة للتسارع:</p><div class="calc">F = m g = '+(S.m/1000).toFixed(3)+' × 9.8 = '+F.toFixed(3)+' N</div>'
+     +'<label>الكتلة المعلقة m: <span class="val">'+S.m+' جم</span><input type="range" id="mslider" min="10" max="50" step="5" value="'+S.m+'"></label><div class="why">اختر كتلة صغيرة مقارنة بكتلة العربة ('+M+' جم) حتى تكون الحركة هادئة وتستطيع البوابتان قياسها بدقة.</div><button class="btn" id="n4">علّق الكتلة</button>';
+  }else if(S.step===5||S.step===7){
+    var n=S.trials.length;
+    h='<h2>الخطوة '+S.step+': '+(S.step===5?'اترك العربة تتحرك':'كرر التجربة')+'</h2><p>'+(S.step===5?'عند الضغط على الزر تنطلق العربة، ويسجّل الحاسوب v₀ عند البوابة الأولى و v عند الثانية والزمن Δt بينهما.':'أعد العربة إلى بداية المضمار وكرر القياس. المحاولة رقم '+(n+1)+' من 3.')+'</p><button class="btn" id="run" '+(S.running?'disabled':'')+'>'+(S.running?'العربة تتحرك...':'اترك العربة')+'</button>';
+  }else if(S.step===6){
+    var t=S.trials[S.trials.length-1],n=S.trials.length;
+    h='<h2>الخطوة ٦: احسب التسارع</h2><p>عوّض قراءات الحاسوب في القانون:</p><div class="calc">a = (v − v₀) / Δt<br>a = ('+t.v.toFixed(3)+' − '+t.v0.toFixed(3)+') / '+t.dt.toFixed(3)+'<br>a = ('+(t.v-t.v0).toFixed(3)+') / '+t.dt.toFixed(3)+' = '+t.a.toFixed(2)+' م/ث²</div>';
+    if(n<3){h+='<p>أنجزت '+n+' من 3 محاولات.</p><button class="btn" id="n6">الخطوة ٧: كرر التجربة</button>'}
+    else{var s=0;S.trials.forEach(function(x){s+=x.a});h+='<p class="good"><b>أنهيت المحاولات الثلاث ✓</b><br>القيم متقاربة، ومتوسط التسارع = '+(s/3).toFixed(2)+' م/ث². التسارع ثابت لأن القوة ثابتة.</p><button class="btn alt" id="reset">ابدأ من جديد</button>'}
+  }
+  p.innerHTML=h;bind();
+}
+function $on(id,ev,fn){var e=$(id);if(e)e.addEventListener(ev,fn)}
+function bind(){
+  $on("b1","click",function(){S.pump=true;render()});
+  $on("tilt","input",function(e){S.tilt=parseFloat(e.target.value);S.tilt=Math.round(S.tilt*10)/10;if(S.tilt===0)S.tilt=0;render();var t=$("tilt");if(t)t.focus()});
+  $on("n1","click",function(){S.step=2;render()});
+  $on("dist","input",function(e){S.d=parseInt(e.target.value);S.gates=true;render();var t=$("dist");if(t)t.focus()});
+  $on("n2","click",function(){S.gates=true;S.step=3;render()});
+  $on("n3","click",function(){S.tied=true;S.step=4;render()});
+  $on("mslider","input",function(e){S.m=parseInt(e.target.value);S.hung=true;render();var t=$("mslider");if(t)t.focus()});
+  $on("n4","click",function(){S.hung=true;S.step=5;render()});
+  $on("run","click",run);
+  $on("n6","click",function(){S.step=7;setGlider(0,0);render();$("screen").innerHTML="في انتظار التجربة..."});
+  $on("reset","click",function(){S={step:1,pump:false,tilt:1.4,tilt0:1.4,d:50,gates:false,tied:false,m:20,hung:false,running:false,trials:[]};$("screen").innerHTML="في انتظار التجربة...";render()});
+}
+function noise(p){return 1+(Math.random()*2-1)*p}
+function run(){
+  if(S.running)return;S.running=true;panel();
+  var a=(S.m*G)/(M+S.m); // م/ث² (قيمة حقيقية تتحكم بها المحاكاة)
+  var A=a*100; // سم/ث²
+  var p1=g1,p2=g1+S.d,t1=Math.sqrt(2*p1/A),t2=Math.sqrt(2*p2/A);
+  var v0=a*t1*noise(.015),v=a*t2*noise(.015),dt=(t2-t1)*noise(.01);
+  var start=performance.now(),hit1=false,hit2=false,end=Math.sqrt(2*(p2+12)/A);
+  $("screen").innerHTML="الحاسوب يسجّل...";
+  function frame(now){
+    var t=(now-start)/1000,x=0.5*A*t*t;
+    setGlider(x,x);
+    if(!hit1&&x>=p1){hit1=true;drawGate("gate1",p1,true,"بوابة ١");$("screen").innerHTML='v₀ = <b>'+v0.toFixed(3)+'</b> m/s'}
+    if(!hit2&&x>=p2){hit2=true;drawGate("gate2",p2,true,"بوابة ٢");$("screen").innerHTML='v₀ = <b>'+v0.toFixed(3)+'</b> m/s<br>v = <b>'+v.toFixed(3)+'</b> m/s<br>Δt = <b>'+dt.toFixed(3)+'</b> s'}
+    if(t<end){requestAnimationFrame(frame)}
+    else{S.trials.push({v0:v0,v:v,dt:dt,a:(v-v0)/dt});S.running=false;S.step=6;render();setTimeout(function(){setGlider(p2+12,p2+12)},0)}
+  }
+  requestAnimationFrame(frame);
+}
+render();
+</script>
+</body>
+</html>
